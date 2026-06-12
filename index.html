@@ -2,32 +2,57 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>物流戰情室</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEI MES - 物流部執行系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <style>
+        .dash-body { background: #020617; color: #f8fafc; padding: 22px; border-radius: 16px; min-height: 80vh; }
+        .cell { background: rgba(30,41,59,0.58); border: 1px solid #334155; padding: 12px; border-radius: 8px; }
+        .rate { font-weight: 900; color: #10b981; font-size: 1.25rem; }
+    </style>
 </head>
-<body class="bg-gray-900 text-white p-10">
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold mb-6">IEI 物流空間戰情室</h1>
-        
-        <div class="flex gap-6 mb-8 p-6 bg-slate-800 border-2 border-emerald-500 rounded-2xl">
-            <div class="text-center">
-                <span class="text-gray-400 text-sm">倉儲溫度</span>
-                <div class="text-4xl font-black text-emerald-400">23.5°C</div>
-            </div>
-            <div class="text-center">
-                <span class="text-gray-400 text-sm">環境濕度</span>
-                <div class="text-4xl font-black text-emerald-400">48%</div>
-            </div>
-        </div>
+<body class="bg-[#f0f4f8]">
+    <header class="bg-[#1e295d] text-white px-6 py-3 flex justify-between items-center">
+        <div class="font-bold">IEI MES 物流部執行系統</div>
+        <nav class="flex gap-4">
+            <button onclick="switchView('menu')" class="hover:text-blue-300">首頁</button>
+            <button onclick="switchView('usage')" class="hover:text-blue-300">棧板使用率</button>
+        </nav>
+    </header>
 
-        <div class="bg-slate-800 p-6 rounded-2xl">
-            <h2 class="text-xl font-bold mb-4">棧板使用率概況</h2>
-            <div class="grid grid-cols-3 gap-4">
-                <div class="bg-slate-700 p-4 rounded-lg">1樓：<span class="text-green-400 font-bold">85%</span></div>
-                <div class="bg-slate-700 p-4 rounded-lg">B1/6F：<span class="text-green-400 font-bold">70%</span></div>
-                <div class="bg-slate-700 p-4 rounded-lg">新廠：<span class="text-yellow-400 font-bold">92%</span></div>
+    <main id="view-menu" class="p-10">
+        <h1 class="text-2xl font-bold">功能選單</h1>
+    </main>
+
+    <main id="view-usage" class="p-10 hidden">
+        <div class="dash-body">
+            <div class="flex gap-8 mb-8 p-6 bg-slate-900 border border-slate-700 rounded-2xl items-center">
+                <div>
+                    <span class="text-xs text-gray-400 uppercase tracking-wider">倉儲溫度</span>
+                    <strong class="block text-3xl font-black text-emerald-400">23.5°C</strong>
+                </div>
+                <div class="w-px h-12 bg-slate-700"></div>
+                <div>
+                    <span class="text-xs text-gray-400 uppercase tracking-wider">環境濕度</span>
+                    <strong class="block text-3xl font-black text-emerald-400">48%</strong>
+                </div>
+            </div>
+            
+            <h2 class="text-xl font-bold mb-6">棧板使用率概況</h2>
+            <div class="grid grid-cols-3 gap-6" id="grid-usage">
+                <div class="cell"><div class="text-gray-400 mb-2">1樓物流區</div><div class="rate">85%</div></div>
+                <div class="cell"><div class="text-gray-400 mb-2">B1/6F物流區</div><div class="rate">70%</div></div>
+                <div class="cell"><div class="text-gray-400 mb-2">新廠區</div><div class="rate">92%</div></div>
             </div>
         </div>
-    </div>
+    </main>
+
+    <script>
+        function switchView(v) {
+            document.getElementById('view-menu').style.display = v==='menu'?'block':'none';
+            document.getElementById('view-usage').style.display = v==='usage'?'block':'none';
+        }
+    </script>
 </body>
 </html>
