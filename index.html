@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IEI MES - 物流部執行系統</title>
+    <!-- 引入 Tailwind CSS 與 Google 圖標庫 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <style>
@@ -81,6 +82,7 @@
 </head>
 <body class="bg-[#f0f4f8] font-sans antialiased selection:bg-blue-500 selection:text-white">
 
+    <!-- 1. 頂部導覽列 -->
     <header class="bg-[#1e295d] text-white px-6 py-3 flex justify-between items-center shadow-md select-none">
         <div class="flex items-center space-x-6">
             <div class="flex items-center space-x-3 border-r border-blue-900/60 pr-6">
@@ -111,6 +113,7 @@
         </div>
     </header>
 
+    <!-- ================= 視窗 A：首頁 ================= -->
     <main id="view-menu" class="max-w-[1600px] mx-auto px-8 py-10 block">
         <div class="mb-8 select-none">
             <h1 class="text-2xl font-bold text-gray-800 tracking-tight">功能選單</h1>
@@ -160,6 +163,7 @@
         </div>
     </main>
 
+    <!-- ================= 視窗 B：工具箱 ================= -->
     <main id="view-tools" class="max-w-[1400px] mx-auto px-8 py-10 hidden text-left">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-300 pb-4 mb-8">
             <div>
@@ -173,7 +177,7 @@
         </div>
 
         <section id="tool-pallet-section" class="bg-white rounded-xl shadow-md p-8 block">
-            <h2 class="text-xl font-bold text-[#2b579a] border-b-2 border-[#2b579a] pb-3 mb-4 text-center">棧板配置評估工具（禁止凸出版）</h2>
+            <h2 class="text-xl font-bold text-[#2b579a] border-b-2 border-[#2b579a] pb-3 mb-4 text-center">棧板配置評估工具</h2>
             <div class="tool-notice mb-6">💡 標準托盤：110×110、120×100、120×80 cm。空運限高 150 cm；海運限高 210 cm。箱子擺放禁止超出外緣邊界。</div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div><label class="block text-sm font-bold text-gray-700 mb-1">箱長 / 機種長度 (cm)：</label><input type="number" id="length" value="50" class="w-full border border-gray-300 rounded p-2.5 text-base font-semibold text-gray-800"></div>
@@ -228,28 +232,44 @@
         </section>
     </main>
 
+    <!-- ================= 視窗 C：棧板使用率 ================= -->
     <main id="view-usage" class="max-w-[1600px] mx-auto px-4 hidden">
         <div class="dash-body">
-            <div class="dash-header">
+            <div class="dash-header flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pb-4 border-b border-slate-700">
                 <div class="dash-title">
                     <h2>物流空間棧板使用率戰情室</h2>
                     <p class="text-[13px] text-[#94a3b8] mt-1">三選項切換｜自動儲存｜Excel匯出｜歷史趨勢圖｜大螢幕整合版</p>
                 </div>
-                <div class="flex gap-[10px] flex-wrap justify-end items-center">
-                    <div class="header-kpi flex gap-2.5 items-center text-white" id="headerPalletSummary">
-                        <div class="bg-slate-900/92 border border-slate-700 rounded-xl p-2.5 min-w-[118px] text-center"><span class="block text-xs text-[#94a3b8]">棧板總數</span><strong id="headerTotalCap" class="block text-xl font-bold mt-0.5">--</strong></div>
-                        <div class="bg-slate-900/92 border border-slate-700 rounded-xl p-2.5 min-w-[118px] text-center"><span class="block text-xs text-[#94a3b8]">使用棧板數</span><strong id="headerTotalAct" class="block text-xl font-bold mt-0.5">--</strong></div>
+                <!-- 整合 KPI、新增溫濕度控制與按鍵區 -->
+                <div class="flex gap-[12px] flex-wrap justify-end items-center w-full lg:w-auto">
+                    <!-- 新增的環境溫濕度監控面板 -->
+                    <div class="flex gap-2 bg-slate-900/92 border border-slate-700 rounded-xl p-2.5 min-w-[170px] text-center">
+                        <div class="flex-1 border-r border-slate-700/60 pr-1.5">
+                            <span class="block text-[11px] text-[#94a3b8]">倉儲溫度</span>
+                            <strong class="block text-lg font-bold mt-0.5 text-emerald-400">23.5°C</strong>
+                        </div>
+                        <div class="flex-1 pl-1.5">
+                            <span class="block text-[11px] text-[#94a3b8]">環境濕度</span>
+                            <strong class="block text-lg font-bold mt-0.5 text-emerald-400">48%</strong>
+                        </div>
                     </div>
-                    <button class="btn primary" onclick="saveCloudData()">☁️ 儲存到雲端</button>
-                    <button class="btn primary" onclick="saveCloudSnapshot()">💾 儲存今日紀錄</button>
-                    <button class="btn" onclick="loadCloudData()">🔄 重新讀取</button>
-                    <button class="btn" onclick="exportExcel()">📊 匯出 Excel</button>
-                    <button class="btn" onclick="clearTodayInputs()">🧹 清空輸入</button>
-                    <button class="btn danger" onclick="clearHistory()">刪除歷史</button>
+                    
+                    <!-- 原始的棧板統計 KPI -->
+                    <div class="header-kpi flex gap-2 items-center text-white" id="headerPalletSummary">
+                        <div class="bg-slate-900/92 border border-slate-700 rounded-xl p-2.5 min-w-[110px] text-center"><span class="block text-xs text-[#94a3b8]">棧板總數</span><strong id="headerTotalCap" class="block text-lg font-bold mt-0.5">--</strong></div>
+                        <div class="bg-slate-900/92 border border-slate-700 rounded-xl p-2.5 min-w-[110px] text-center"><span class="block text-xs text-[#94a3b8]">使用棧板數</span><strong id="headerTotalAct" class="block text-lg font-bold mt-0.5">--</strong></div>
+                    </div>
+                    
+                    <button class="btn primary text-xs" onclick="saveCloudData()">☁️ 儲存到雲端</button>
+                    <button class="btn primary text-xs" onclick="saveCloudSnapshot()">💾 儲存今日紀錄</button>
+                    <button class="btn text-xs" onclick="loadCloudData()">🔄 重新讀取</button>
+                    <button class="btn text-xs" onclick="exportExcel()">📊 匯出 Excel</button>
+                    <button class="btn text-xs" onclick="clearTodayInputs()">🧹 清空輸入</button>
+                    <button class="btn danger text-xs" onclick="clearHistory()">刪除歷史</button>
                 </div>
             </div>
 
-            <div class="tabs">
+            <div class="tabs mt-4">
                 <button class="tab active" onclick="showDashboardTab('one',this)">1樓物流空間</button>
                 <button class="tab" onclick="showDashboardTab('b16',this)">B1/6F物流空間</button>
                 <button class="tab" onclick="showDashboardTab('new1',this)">新廠1樓物流空間</button>
@@ -596,7 +616,6 @@
         function saveSnapshot() {
             calcAll();
             const h = JSON.parse(localStorage.getItem(historyKey) || '[]');
-            // 安全空值確保
             const rates = window.currentRates || { one:0, b16:0, new1:0, total:0 };
             h.push({ time: new Date().toLocaleString('zh-TW', { hour12: false }), one: rates.one, b16: rates.b16, new1: rates.new1, total: rates.total });
             localStorage.setItem(historyKey, JSON.stringify(h));
@@ -612,7 +631,6 @@
             drawTrend();
         }
 
-        // 徹底修正 window.currentRates 卡死畫布的 Null 報錯問題
         function drawTrend() {
             const canvas = document.getElementById('trendCanvas'); if (!canvas) return;
             const ctx = canvas.getContext('2d'), h = JSON.parse(localStorage.getItem(historyKey) || '[]').slice(-12);
@@ -680,11 +698,8 @@
 
         // ==================== [4. 系統開機安全初始化執行] ====================
         window.addEventListener('DOMContentLoaded', () => {
-            // 1. 先安全初始化 window.currentRates 全域記憶體空物件防錯
             window.currentRates = { one: 0, b16: 0, new1: 0, total: 0, cap: 0, act: 0 };
-            // 2. 渲染戰情室所有的 HTML 動態儲位網格
             renderDashboard();
-            // 3. 預先跑一次評櫃畫布
             calculatePallet();
         });
     </script>
