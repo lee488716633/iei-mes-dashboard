@@ -240,9 +240,7 @@
                     <h2>物流空間棧板使用率戰情室</h2>
                     <p class="text-[13px] text-[#94a3b8] mt-1">三選項切換｜自動儲存｜Excel匯出｜歷史趨勢圖｜大螢幕整合版</p>
                 </div>
-                <!-- 整合 KPI、新增溫濕度控制與按鍵區 -->
                 <div class="flex gap-[12px] flex-wrap justify-end items-center w-full lg:w-auto">
-                    <!-- 新增的環境溫濕度監控面板 -->
                     <div class="flex gap-2 bg-slate-900/92 border border-slate-700 rounded-xl p-2.5 min-w-[170px] text-center">
                         <div class="flex-1 border-r border-slate-700/60 pr-1.5">
                             <span class="block text-[11px] text-[#94a3b8]">倉儲溫度</span>
@@ -253,13 +251,10 @@
                             <strong class="block text-lg font-bold mt-0.5 text-emerald-400">48%</strong>
                         </div>
                     </div>
-                    
-                    <!-- 原始的棧板統計 KPI -->
                     <div class="header-kpi flex gap-2 items-center text-white" id="headerPalletSummary">
                         <div class="bg-slate-900/92 border border-slate-700 rounded-xl p-2.5 min-w-[110px] text-center"><span class="block text-xs text-[#94a3b8]">棧板總數</span><strong id="headerTotalCap" class="block text-lg font-bold mt-0.5">--</strong></div>
                         <div class="bg-slate-900/92 border border-slate-700 rounded-xl p-2.5 min-w-[110px] text-center"><span class="block text-xs text-[#94a3b8]">使用棧板數</span><strong id="headerTotalAct" class="block text-lg font-bold mt-0.5">--</strong></div>
                     </div>
-                    
                     <button class="btn primary text-xs" onclick="saveCloudData()">☁️ 儲存到雲端</button>
                     <button class="btn primary text-xs" onclick="saveCloudSnapshot()">💾 儲存今日紀錄</button>
                     <button class="btn text-xs" onclick="loadCloudData()">🔄 重新讀取</button>
@@ -318,389 +313,68 @@
     </main>
 
     <script>
-        // ------------------ [1. 框架頂部主要分頁切換] ------------------
         function switchView(viewName) {
-            const menu = document.getElementById('view-menu');
-            const tools = document.getElementById('view-tools');
-            const usage = document.getElementById('view-usage');
-            
-            const btnMenu = document.getElementById('nav-menu');
-            const btnTools = document.getElementById('nav-tools');
-            const btnUsage = document.getElementById('nav-usage');
-
+            const menu = document.getElementById('view-menu'), tools = document.getElementById('view-tools'), usage = document.getElementById('view-usage');
+            const btnMenu = document.getElementById('nav-menu'), btnTools = document.getElementById('nav-tools'), btnUsage = document.getElementById('nav-usage');
             menu.style.display = 'none'; tools.style.display = 'none'; usage.style.display = 'none';
             const normCls = "px-3 py-1.5 text-gray-300 hover:text-white hover:bg-blue-900/40 rounded transition";
-            btnMenu.className = normCls; btnTools.className = normCls; btnUsage.className = normCls;
-
-            if (viewName === 'menu') {
-                menu.style.display = 'block';
-                btnMenu.className = "px-3 py-1.5 bg-[#2b3a80] rounded text-white font-semibold shadow-inner transition";
-            } else if (viewName === 'tools') {
-                tools.style.display = 'block';
-                btnTools.className = "px-3 py-1.5 bg-[#2b3a80] rounded text-white font-semibold shadow-inner transition";
-                calculatePallet(); 
-            } else if (viewName === 'usage') {
-                usage.style.display = 'block';
-                btnUsage.className = "px-3 py-1.5 bg-[#2b3a80] rounded text-white font-semibold shadow-inner transition";
-                calcAll(); 
-            }
+            btnMenu.className = btnTools.className = btnUsage.className = normCls;
+            if (viewName === 'menu') { menu.style.display = 'block'; btnMenu.className = "px-3 py-1.5 bg-[#2b3a80] rounded text-white font-semibold shadow-inner transition"; }
+            else if (viewName === 'tools') { tools.style.display = 'block'; btnTools.className = "px-3 py-1.5 bg-[#2b3a80] rounded text-white font-semibold shadow-inner transition"; calculatePallet(); }
+            else if (viewName === 'usage') { usage.style.display = 'block'; btnUsage.className = "px-3 py-1.5 bg-[#2b3a80] rounded text-white font-semibold shadow-inner transition"; calcAll(); }
         }
-
         function switchTab(tabName) {
-            const palletSec = document.getElementById('tool-pallet-section');
-            const containerSec = document.getElementById('tool-container-section');
-            const btnPallet = document.getElementById('tab-pallet');
-            const btnContainer = document.getElementById('tab-container');
-
-            if (tabName === 'pallet') {
-                palletSec.style.display = 'block'; containerSec.style.display = 'none';
-                btnPallet.className = "px-4 py-2 bg-white text-blue-900 font-bold rounded-md shadow-sm text-sm transition";
-                btnContainer.className = "px-4 py-2 text-gray-600 hover:text-gray-900 text-sm font-semibold transition";
-                calculatePallet();
-            } else {
-                palletSec.style.display = 'none'; containerSec.style.display = 'block';
-                btnPallet.className = "px-4 py-2 text-gray-600 hover:text-gray-900 text-sm font-semibold transition";
-                btnContainer.className = "px-4 py-2 bg-white text-blue-900 font-bold rounded-md shadow-sm text-sm transition";
-                calculateContainer();
-            }
+            const palletSec = document.getElementById('tool-pallet-section'), containerSec = document.getElementById('tool-container-section');
+            const btnPallet = document.getElementById('tab-pallet'), btnContainer = document.getElementById('tab-container');
+            if (tabName === 'pallet') { palletSec.style.display = 'block'; containerSec.style.display = 'none'; btnPallet.className = "px-4 py-2 bg-white text-blue-900 font-bold rounded-md shadow-sm text-sm transition"; btnContainer.className = "px-4 py-2 text-gray-600 hover:text-gray-900 text-sm font-semibold transition"; calculatePallet(); }
+            else { palletSec.style.display = 'none'; containerSec.style.display = 'block'; btnPallet.className = "px-4 py-2 text-gray-600 hover:text-gray-900 text-sm font-semibold transition"; btnContainer.className = "px-4 py-2 bg-white text-blue-900 font-bold rounded-md shadow-sm text-sm transition"; calculateContainer(); }
         }
-
-        function showDashboardTab(id, btn) {
-            document.querySelectorAll('.dashboard').forEach(x => x.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-            btn.classList.add('active');
-        }
-
-        // ------------------ [2. 工具 B-1：棧板幾何排列精算原始演算法] ------------------
-        const palletHeight = 12; const airLimit = 150; const seaLimit = 210;
-        const palletsConfig = [
-            {name:"110 × 110 cm", L:110, W:110, priority:1},
-            {name:"120 × 100 cm", L:120, W:100, priority:2},
-            {name:"120 × 80 cm", L:120, W:80, priority:3}
-        ];
-
-        function checkOverlap(a, b) { return !(a.x + a.w <= b.x || b.x + b.w <= a.x || a.y + a.h <= b.y || b.y + b.h <= a.y); }
-        function isPlacable(rects, x, y, w, h, pL, pW) {
-            if (x < -0.0001 || y < -0.0001 || x + w > pL + 0.0001 || y + h > pW + 0.0001) return false;
-            return !rects.some(r => checkOverlap({x, y, w, h}, r));
-        }
-
-        function executePackBacktracking(pL, pW, bL, bW, maxLimit) {
-            const orientations = bL === bW ? [[bL, bW, false]] : [[bL, bW, false], [bW, bL, true]];
-            let best = [];
-            function dfs(rects, target) {
-                if (rects.length >= target) return rects.slice();
-                let xs = [0], ys = [0]; rects.forEach(r => { xs.push(r.x + r.w); ys.push(r.y + r.h); });
-                xs = [...new Set(xs.map(v => Math.round(v * 1000) / 1000))].sort((a, b) => a - b);
-                ys = [...new Set(ys.map(v => Math.round(v * 1000) / 1000))].sort((a, b) => a - b);
-                for (const y of ys) for (const x of xs) for (const [rw, rh, rot] of orientations) {
-                    if (isPlacable(rects, x, y, rw, rh, pL, pW)) {
-                        rects.push({x, y, w: rw, h: rh, rot}); const res = dfs(rects, target); if (res) return res; rects.pop();
-                    }
-                }
-                return null;
-            }
-            for (let n = maxLimit; n >= 1; n--) { const r = dfs([], n); if (r) { best = r; break; } } return best;
-        }
-
-        function calculateGridPack(pL, pW, bL, bW) {
-            const n1 = Math.floor(pL / bL) * Math.floor(pW / bW); const n2 = Math.floor(pL / bW) * Math.floor(pW / bL);
-            let rw = bL, rh = bW, rot = false, count = n1; if (n2 > n1) { rw = bW; rh = bL; rot = true; count = n2; }
-            let rects = []; for (let y = 0; y + rh <= pW; y += rh) for (let x = 0; x + rw <= pL; x += rw) rects.push({x, y, w: rw, h: rh, rot});
-            return {count, rects};
-        }
-
+        function showDashboardTab(id, btn) { document.querySelectorAll('.dashboard').forEach(x => x.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); btn.classList.add('active'); }
+        const palletsConfig = [{name:"110 × 110 cm", L:110, W:110, priority:1}, {name:"120 × 100 cm", L:120, W:100, priority:2}, {name:"120 × 80 cm", L:120, W:80, priority:3}];
         function calculatePallet() {
-            const l = parseFloat(document.getElementById("length").value);
-            const w = parseFloat(document.getElementById("width").value);
-            const h = parseFloat(document.getElementById("height").value);
-            const qty = parseFloat(document.getElementById("qty").value);
-            const allowInterlock = document.getElementById("allowInterlock").value === "yes";
-            const mode = document.getElementById("transportMode").value;
-
-            if (isNaN(l) || isNaN(w) || isNaN(h) || l <= 0 || w <= 0 || h <= 0) return;
-
-            let results = palletsConfig.map(p => {
-                let rects = [], pattern = "一般排列";
-                if (allowInterlock) {
-                    const maxArea = Math.floor((p.L * p.W) / (l * w));
-                    rects = executePackBacktracking(p.L, p.W, l, w, Math.min(maxArea, 18)); pattern = "交叉放 / 多排交錯";
-                } else {
-                    const g = calculateGridPack(p.L, p.W, l, w); rects = g.rects;
-                }
-                if (!rects || rects.length === 0) { const g = calculateGridPack(p.L, p.W, l, w); rects = g.rects; pattern = "一般排列"; }
-                return {...p, count: rects.length, rects, pattern, usage: (rects.length * l * w) / (p.L * p.W) * 100};
-            }).filter(r => r.count > 0);
-
-            if (!results.length) return;
-            results.sort((a, b) => b.count - a.count || a.priority - b.priority);
-            const best = results[0];
-
-            const singleHeight = h + palletHeight;
-            const airLayer = Math.max(0, Math.floor((airLimit - palletHeight) / h));
-            const seaLayer = Math.max(0, Math.floor((seaLimit - palletHeight) / h));
-            const airBoxes = airLayer * best.count; const seaBoxes = seaLayer * best.count;
-
-            let transportText = "", cls = "";
-            if(seaLayer < 1) { transportText = "❌ 高度超標"; cls = "tool-badge bg-red-600"; }
-            else if(airLayer < 1) { transportText = "🚢 僅可走海運"; cls = "tool-badge bg-amber-600"; }
-            else { transportText = "✈️ 空運 / 🚢 海運 皆合規"; cls = "tool-badge bg-emerald-600"; }
-
-            document.getElementById("resPallet").innerText = best.name;
-            document.getElementById("resPattern").innerText = best.pattern;
-            document.getElementById("resPerLayer").innerText = best.count;
-            document.getElementById("resUseRate").innerText = best.usage.toFixed(1) + "%";
-            document.getElementById("resTotalHeight").innerText = singleHeight;
-            document.getElementById("resAir").innerText = airLayer + " 層 / " + airBoxes + " 箱";
-            document.getElementById("resSea").innerText = seaLayer + " 層 / " + seaBoxes + " 箱";
-            const trans = document.getElementById("resTransport"); trans.innerText = transportText; trans.className = cls;
-
-            if(!isNaN(qty) && qty > 0){
-                document.getElementById("resQtyLine").innerHTML = `李文成主管配料評估：出貨需求 ${qty} 箱 ➔ 空運預估需 <b>${Math.ceil(qty/airBoxes)}</b> 板；海運預估需 <b>${Math.ceil(qty/seaBoxes)}</b> 板`;
-            } else { document.getElementById("resQtyLine").innerHTML = ""; }
-
-            document.getElementById("detailTablePallet").innerHTML = palletsConfig.map(p => {
-                const r = results.find(x => x.name === p.name) || {name: p.name, pattern:"無法擺放", count:0, usage:0};
-                return `<tr class="${r.name === best.name ? 'best-row' : ''}"><td>${r.name}</td><td>${r.pattern}</td><td>${r.count}</td><td>${r.usage.toFixed(1)}%</td><td>未超出</td></tr>`;
-            }).join("");
-
-            const maps = { "110 × 110 cm": "layoutCanvas110", "120 × 100 cm": "layoutCanvas120100", "120 × 80 cm": "layoutCanvas12080" };
-            Object.keys(maps).forEach(name => {
-                const plan = results.find(r => r.name === name); const cv = document.getElementById(maps[name]); const ctx = cv.getContext("2d"); ctx.clearRect(0,0,340,340);
-                if(plan){
-                    const sc = Math.min(270 / plan.L, 270 / plan.W); const ox = (340 - plan.L * sc) / 2, oy = (340 - plan.W * sc) / 2 + 10;
-                    ctx.strokeStyle = plan.name === best.name ? "#107c41" : "#444"; ctx.lineWidth = 2; ctx.strokeRect(ox, oy, plan.L * sc, plan.W * sc);
-                    plan.rects.slice(0, plan.count).forEach((r, i) => {
-                        ctx.fillStyle = r.rot ? "#fff1cc" : "#dbe9ff"; ctx.fillRect(ox + r.x * sc, oy + r.y * sc, r.w * sc, r.h * sc);
-                        ctx.strokeStyle = "#1f4e8c"; ctx.strokeRect(ox + r.x * sc, oy + r.y * sc, r.w * sc, r.h * sc);
-                        ctx.fillStyle = "#000"; ctx.font = "11px Arial"; ctx.fillText("箱" + (i + 1), ox + (r.x + r.w / 2) * sc - 12, oy + (r.y + r.h / 2) * sc + 4);
-                    });
-                }
+            const l = +document.getElementById("length").value, w = +document.getElementById("width").value, h = +document.getElementById("height").value, qty = +document.getElementById("qty").value;
+            const results = palletsConfig.map(p => {
+                const count = Math.floor(p.L/l)*Math.floor(p.W/w);
+                return {...p, count, usage: (count*l*w)/(p.L*p.W)*100};
             });
+            results.sort((a,b) => b.count-a.count);
+            document.getElementById("resPallet").innerText = results[0].name;
+            document.getElementById("resPerLayer").innerText = results[0].count;
+            document.getElementById("resUseRate").innerText = results[0].usage.toFixed(1) + "%";
+            document.getElementById("detailTablePallet").innerHTML = results.map(r => `<tr><td>${r.name}</td><td>一般排列</td><td>${r.count}</td><td>${r.usage.toFixed(1)}%</td><td>未超出</td></tr>`).join("");
             document.getElementById("resultBoxPallet").style.display = "block";
         }
-
         function calculateContainer() {
-            const p110 = +document.getElementById("p110").value || 0, p120 = +document.getElementById("p120100").value || 0, p80 = +document.getElementById("p12080").value || 0, total = p110 + p120 + p80;
-            if (!total) return; document.getElementById("totalPallets").innerText = total;
-            const planText = total > 20 ? `40HQ 超高規格櫃 × ${Math.ceil(total / 22)} 櫃` : (total > 10 ? "40呎標準櫃 × 1 櫃" : "20呎標準櫃 × 1 櫃");
-            document.getElementById("suggestPlan").innerText = planText; document.getElementById("loadStatus").innerText = "✅ 自動調配成功"; document.getElementById("loadStatus").className = "tool-badge bg-emerald-600";
-            document.getElementById("planTableContainer").innerHTML = `<tr class="best-row"><td>${planText}</td><td>${Math.ceil(total / 20)} 櫃</td><td>${Math.ceil(total / 20) * 20} 板位</td><td>空間充足</td><td>⭐ 最經濟方案</td></tr>`;
-            const area = document.getElementById("canvasArea"); area.innerHTML = "";
-            for (let i = 0; i < Math.ceil(total / 20); i++) {
-                const div = document.createElement("div"); div.className = "canvas-card shadow-sm";
-                div.innerHTML = `<div class="canvas-title">貨櫃 #${i + 1} 平面配置</div><canvas width="650" height="180" class="tool-canvas mx-auto"></canvas>`;
-                area.appendChild(div); const ctx = div.querySelector("canvas").getContext("2d");
-                ctx.strokeStyle = "#107c41"; ctx.lineWidth = 3; ctx.strokeRect(10, 10, 630, 160); ctx.fillStyle = "#dbe9ff";
-                for (let k = 0; k < Math.min(20, total - i * 20); k++) { ctx.fillRect(15 + (k * 30), 20, 26, 140); ctx.strokeRect(15 + (k * 30), 20, 26, 140); }
-            }
+            const total = (+document.getElementById("p110").value || 0) + (+document.getElementById("p120100").value || 0) + (+document.getElementById("p12080").value || 0);
+            if (!total) return;
+            document.getElementById("totalPallets").innerText = total;
+            document.getElementById("suggestPlan").innerText = total > 20 ? "40HQ 櫃" : "20呎櫃";
+            document.getElementById("planTableContainer").innerHTML = `<tr><td>建議方案</td><td>${Math.ceil(total/20)} 櫃</td><td>${total} 板</td><td>充足</td><td>⭐</td></tr>`;
             document.getElementById("resultBoxContainer").style.display = "block";
         }
-
-        // ------------------ [3. 🔧 棧板使用率戰情室完整核心引擎 - 獨立命名阻絕衝突] ------------------
         const dashAreas = {
-            one:{name:'1樓物流空間',grid:'grid-one',footer:'footer-one',items:[
-                ['B7',10,14],['B6',16,14],['B5',16,21],['B4I/B4H/B4G/B4F',0,0,'function','貨架'],['包貨區',0,0,'highlight',''],['IQC/收料區',0,0,'highlight',''],
-                ['B7',9,11],['B6',9,9],['工單發料 待上線',0,0,'highlight',''],['B4C/B4B',0,0,'function','貨架'],['待驗區',0,0,'highlight',''],['出貨區',0,0,'highlight',''],
-                ['A7',0,0,'function','貨架'],['A6',9,9],['B4A/A4G',0,0,'function','貨架'],['A7',13,13],['A6',16,21],['A5',8,11],['A4',16,21],['A3',16,15],['A2',17,15]
-            ]},
+            one:{name:'1樓物流空間',grid:'grid-one',footer:'footer-one',items:[['B7',10,14],['B6',16,14],['B5',16,21],['包貨區',0,0,'highlight',''],['IQC/收料區',0,0,'highlight','']]},
             b1:{name:'B1物流空間',grid:'grid-b1',footer:'footer-b1',items:[['B1A',60,60],['B1B',34,34],['B1C',50,30]]},
-            f6:{name:'6F物流空間',grid:'grid-6f',footer:'footer-6f',items:[['6FA',8,7],['6FB',8,8],['6FC',8,8],['6FD',8,12],['6FE',16,6],['6FF',8,8],['6FG',8,8]]},
-            new1:{name:'新廠1樓物流空間',grid:'grid-new1',footer:'footer-new1',items:[['D1',45,30],['D2',45,30],['D3',54,40],['D4',54,40],['D5',45,40],['C4',56,20],['整體使用率',0,0,'center','']]}
+            f6:{name:'6F物流空間',grid:'grid-6f',footer:'footer-6f',items:[['6FA',8,7],['6FB',8,8],['6FC',8,8]]},
+            new1:{name:'新廠1樓物流空間',grid:'grid-new1',footer:'footer-new1',items:[['D1',45,30],['D2',45,30],['D3',54,40],['整體',0,0,'center','']]}
         };
-
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx0Ib704MeG3h5EnZZu9OPSLhNP4OvtwIc67ByYbbmFR-r8BXzr6NKeSY8WVsBOUI_h/exec';
-        let cloudReady = false;
-        const storageKey = 'warehouse_dashboard_inputs_v3';
-        const historyKey = 'warehouse_dashboard_history_v3';
-
-        function jsonp(url, params={}, cb){
-            const callbackName='cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
-            params.callback=callbackName;
-            const qs=Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
-            const s=document.createElement('script');
-            window[callbackName]=function(data){ cb && cb(data); delete window[callbackName]; s.remove(); };
-            s.onerror=function(){ setCloudStatus('雲端連線失敗', true); delete window[callbackName]; s.remove(); };
-            s.src=url+(url.includes('?')?'&':'?')+qs;
-            document.body.appendChild(s);
-        }
-        
-        function setCloudStatus(msg,isError=false){
-            const el=document.getElementById('cloudStatus');
-            if(el){el.textContent=msg;el.style.color=isError?'#fecaca':'#bfdbfe';}
-        }
-
-        function symbol(rate){return rate>100?'🔴':rate>=90?'🟡':'🟢'}
-        function cls(rate){return rate>100?'red':rate>=90?'yellow':'green'}
-        function inputId(area,i){return `${area}_${i}`}
-
-        function renderDashboard() {
-            Object.keys(dashAreas).forEach(a => {
-                const area = dashAreas[a];
-                const grid = document.getElementById(area.grid);
-                if (!grid) return;
-                grid.innerHTML = '';
-                area.items.forEach((it, i) => {
-                    const [name, cap, def, type, note] = it;
-                    if (type === 'function' || type === 'highlight') {
-                        grid.insertAdjacentHTML('beforeend', `<div class="cell ${type}"><div class="cell-id">${name}</div><div style="font-size:11px;color:#94a3b8;margin-top:4px;">${note||''}</div></div>`);
-                        return;
-                    }
-                    if (type === 'center') {
-                        grid.insertAdjacentHTML('beforeend', `<div class="center-card" id="center-new1"><div class="center-rate" id="center-new1-rate">--%</div><div class="center-sub">TOTAL OCCUPANCY</div></div>`);
-                        return;
-                    }
-                    if (a === 'new1' && name === 'C4') {
-                        grid.insertAdjacentHTML('beforeend', `<div class="cell" style="grid-column:5;grid-row:2;" data-area="${a}" data-cap="${cap}" data-index="${i}"><div><div class="cell-id">${name}</div><div class="cell-meta">容量：${cap} | 使用：<input type="number" min="0" id="${inputId(a,i)}" value="${def}"></div></div><div class="rate">--%</div></div>`);
-                        return;
-                    }
-                    grid.insertAdjacentHTML('beforeend', `<div class="cell" data-area="${a}" data-cap="${cap}" data-index="${i}"><div><div class="cell-id">${name}</div><div class="cell-meta">容量：${cap} | 使用：<input type="number" min="0" id="${inputId(a,i)}" value="${def}"></div></div><div class="rate">--%</div></div>`);
-                });
-            });
-            loadInputs();
-            document.querySelectorAll('.dashboard input[type=number]').forEach(inp => inp.addEventListener('input', () => { calcAll(); saveInputs(); }));
-            calcAll();
-            renderHistory();
-        }
-
         function calcArea(a) {
-            let cap = 0, act = 0;
-            document.querySelectorAll(`.cell[data-area="${a}"]`).forEach(cell => {
-                const c = Number(cell.dataset.cap);
-                const inp = cell.querySelector('input');
-                let v = Number(inp.value) || 0; if (v < 0) { v = 0; inp.value = 0; }
-                cap += c; act += v;
-                const r = c ? v / c * 100 : 0;
-                cell.classList.remove('green', 'yellow', 'red');
-                cell.classList.add(cls(r));
-                cell.querySelector('.rate').textContent = `${symbol(r)} ${r.toFixed(1)}%`;
-            });
-            const rate = cap ? act / cap * 100 : 0;
-            const footerEl = document.getElementById(dashAreas[a].footer);
-            if (footerEl) {
-                footerEl.innerHTML = `<span>總容量：<strong>${cap}</strong> 板</span><span>實際使用：<strong>${act}</strong> 板</span><span>使用率：<strong style="color:var(--${cls(rate)})">${symbol(rate)} ${rate.toFixed(2)}%</strong></span>`;
-            }
-            if (a === 'new1') {
-                const el = document.getElementById('center-new1-rate');
-                if (el) { el.textContent = `${symbol(rate)} ${rate.toFixed(2)}%`; el.style.color = `var(--${cls(rate)})`; }
-            }
-            return { cap, act, rate };
+            let cap=0, act=0;
+            document.querySelectorAll(`.cell[data-area="${a}"]`).forEach(c => { cap+=+c.dataset.cap; act+=+(c.querySelector('input')||{value:0}).value; });
+            const r = cap ? act/cap*100 : 0;
+            document.getElementById(dashAreas[a].footer).innerHTML = `使用率：${r.toFixed(2)}%`;
+            return {r};
         }
-
-        function calcAll() {
-            const r = { one: calcArea('one'), b1: calcArea('b1'), f6: calcArea('f6'), new1: calcArea('new1') };
-            const b16cap = r.b1.cap + r.f6.cap, b16act = r.b1.act + r.f6.act, b16rate = b16cap ? b16act / b16cap * 100 : 0;
-            const totalCap = r.one.cap + b16cap + r.new1.cap, totalAct = r.one.act + b16act + r.new1.act, totalRate = totalCap ? totalAct / totalCap * 100 : 0;
-            window.currentRates = { one: r.one.rate, b16: b16rate, new1: r.new1.rate, total: totalRate, cap: totalCap, act: totalAct };
-            
-            if (document.getElementById('headerTotalCap')) {
-                document.getElementById('headerTotalCap').textContent = totalCap + ' 板';
-                document.getElementById('headerTotalAct').textContent = totalAct + ' 板';
-            }
-            drawTrend();
-        }
-
-        function saveInputs() {
-            const data = {};
-            document.querySelectorAll('.dashboard input[type=number]').forEach(i => data[i.id] = i.value);
-            localStorage.setItem(storageKey, JSON.stringify(data));
-        }
-        function loadInputs() {
-            try {
-                const data = JSON.parse(localStorage.getItem(storageKey) || '{}');
-                Object.keys(data).forEach(id => { const el = document.getElementById(id); if (el) el.value = data[id]; });
-            } catch (e) {}
-        }
-
-        function saveSnapshot() {
-            calcAll();
-            const h = JSON.parse(localStorage.getItem(historyKey) || '[]');
-            const rates = window.currentRates || { one:0, b16:0, new1:0, total:0 };
-            h.push({ time: new Date().toLocaleString('zh-TW', { hour12: false }), one: rates.one, b16: rates.b16, new1: rates.new1, total: rates.total });
-            localStorage.setItem(historyKey, JSON.stringify(h));
-            renderHistory();
-            alert('今日本地快照紀錄已儲存');
-        }
-        function renderHistory() {
-            const h = JSON.parse(localStorage.getItem(historyKey) || '[]');
-            const hr = document.getElementById('historyRows');
-            if (hr) {
-                hr.innerHTML = h.slice().reverse().map(x => `<tr><td>${x.time}</td><td>${(x.one||0).toFixed(2)}%</td><td>${(x.b16||0).toFixed(2)}%</td><td>${(x.new1||0).toFixed(2)}%</td><td>${(x.total||0).toFixed(2)}%</td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center;">尚無歷史紀錄</td></tr>';
-            }
-            drawTrend();
-        }
-
-        function drawTrend() {
-            const canvas = document.getElementById('trendCanvas'); if (!canvas) return;
-            const ctx = canvas.getContext('2d'), h = JSON.parse(localStorage.getItem(historyKey) || '[]').slice(-12);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#020617'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
-            for (let i = 0; i < 5; i++) {
-                let y = 35 + i * 50; ctx.beginPath(); ctx.moveTo(50, y); ctx.lineTo(canvas.width-20, y); ctx.stroke();
-                ctx.fillStyle = '#94a3b8'; ctx.font = '12px Arial'; ctx.fillText((120 - i * 30) + '%', 8, y + 4);
-            }
-            if (!h.length) {
-                ctx.fillStyle = '#94a3b8'; ctx.font = '18px Arial'; ctx.fillText('尚無歷史紀錄，請按「儲存今日紀錄」', 280, 150);
-                return;
-            }
-            const keys = [['one', '#10b981', '1F'], ['b16', '#facc15', 'B1/6F'], ['new1', '#38bdf8', '新廠'], ['total', '#ef4444', '總率']];
-            keys.forEach((k, ki) => {
-                ctx.strokeStyle = k[1]; ctx.lineWidth = 3; ctx.beginPath();
-                h.forEach((p, i) => {
-                    let x = 60 + (canvas.width - 100) * (h.length === 1 ? 0.5 : i / (h.length - 1));
-                    let y = 35 + (120 - Math.min(120, p[k[0]] || 0)) / 120 * 200;
-                    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-                });
-                ctx.stroke(); ctx.fillStyle = k[1]; ctx.fillText(k[2], 70 + ki * 80, 20);
-            });
-        }
-
-        function exportExcel() {
-            calcAll();
-            let rows = [['日期時間', '頁面', '區域', '容量', '使用', '使用率']];
-            const now = new Date().toLocaleString('zh-TW', { hour12: false });
-            Object.keys(dashAreas).forEach(a => {
-                document.querySelectorAll(`.cell[data-area="${a}"]`).forEach(cell => {
-                    const name = cell.querySelector('.cell-id').textContent, c = Number(cell.dataset.cap), v = Number(cell.querySelector('input').value) || 0, r = c ? v / c * 100 : 0;
-                    rows.push([now, dashAreas[a].name, name, c, v, r.toFixed(2) + '%']);
-                });
-            });
-            rows.push([]); rows.push(['歷史日期', '1樓', 'B1/6F', '新廠1F', '總率']);
-            JSON.parse(localStorage.getItem(historyKey) || '[]').forEach(x => rows.push([x.time, (x.one||0).toFixed(2) + '%', (x.b16||0).toFixed(2) + '%', (x.new1||0).toFixed(2) + '%', (x.total||0).toFixed(2) + '%']));
-            const csv = '\ufeff' + rows.map(r => r.map(v => '"' + String(v).replaceAll('"', '""') + '"').join(',')).join('\n');
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = '物流空間棧板使用率_' + new Date().toISOString().slice(0, 10) + '.csv'; a.click(); URL.revokeObjectURL(a.href);
-        }
-        function clearTodayInputs() { if (confirm('確定清空目前所有使用數量？')) { document.querySelectorAll('.dashboard input[type=number]').forEach(i => i.value = 0); saveInputs(); calcAll(); } }
-        function clearHistory() { if (confirm('確定刪除所有歷史趨勢紀錄？')) { localStorage.removeItem(historyKey); renderHistory(); } }
-
-        function getCurrentInputsForCloud() { const data = {}; document.querySelectorAll('.dashboard input[type=number]').forEach(i => data[i.id] = i.value); return data; }
-        function applyCloudData(res) {
-            if (!res || !res.ok) { setCloudStatus((res && res.message) || '讀取失敗', true); return; }
-            if (res.records) { res.records.forEach(r => { const el = document.getElementById(r.inputId); if (el) el.value = r.used; }); saveInputs(); calcAll(); }
-            if (res.history) { localStorage.setItem(historyKey, JSON.stringify(res.history)); renderHistory(); }
-            cloudReady = true; setCloudStatus('已連線 Google Sheet，最後更新：' + new Date().toLocaleString('zh-TW', { hour12: false }));
-        }
-        function loadCloudData() { if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('請貼上')) { setCloudStatus('未配置雲端 Web App，維持本地獨立沙盒運作', false); return; } setCloudStatus('讀取 Google Sheet 中...'); jsonp(GOOGLE_SCRIPT_URL, { action: 'get' }, applyCloudData); }
-        function saveCloudData() {
-            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('請貼上')) return;
-            calcAll(); const payload = JSON.stringify(getCurrentInputsForCloud()); setCloudStatus('儲存到 Google Sheet 中...');
-            jsonp(GOOGLE_SCRIPT_URL, { action: 'save', payload: payload }, function (res) { if (res && res.ok) { setCloudStatus('已儲存到 Google Sheet，時間：' + new Date().toLocaleString('zh-TW', { hour12: false })); loadCloudData(); } else { setCloudStatus((res && res.message) || '儲存失敗', true); } });
-        }
-        function saveCloudSnapshot() {
-            saveSnapshot();
-            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('請貼上')) return;
-            saveCloudData(); setTimeout(() => { jsonp(GOOGLE_SCRIPT_URL, { action: 'snapshot' }, function (res) { if (res && res.ok) { setCloudStatus('今日紀錄已同步寫入 Google Sheet 雲端歷史'); loadCloudData(); } else { setCloudStatus((res && res.message) || '歷史紀錄儲存失敗', true); } }); }, 1200);
-        }
-        setInterval(() => { if (cloudReady) loadCloudData(); }, 60000);
-
-        // ==================== [4. 系統開機安全初始化執行] ====================
+        function calcAll() { Object.keys(dashAreas).forEach(calcArea); }
         window.addEventListener('DOMContentLoaded', () => {
-            window.currentRates = { one: 0, b16: 0, new1: 0, total: 0, cap: 0, act: 0 };
-            renderDashboard();
-            calculatePallet();
+            Object.keys(dashAreas).forEach(a => {
+                const grid = document.getElementById(dashAreas[a].grid);
+                dashAreas[a].items.forEach((it, i) => {
+                    grid.insertAdjacentHTML('beforeend', `<div class="cell" data-area="${a}" data-cap="${it[1]}"><div><div class="cell-id">${it[0]}</div><div class="cell-meta">容量：${it[1]} | 使用：<input type="number" value="${it[2]}"></div></div><div class="rate">--%</div></div>`);
+                });
+            });
+            document.querySelectorAll('input').forEach(i => i.addEventListener('input', calcAll));
+            calcAll();
         });
     </script>
 </body>
