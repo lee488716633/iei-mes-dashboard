@@ -8,39 +8,39 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <style>
         .dash-body { background: #020617; color: #f8fafc; padding: 22px; border-radius: 16px; min-height: 80vh; }
-        .cell { background: rgba(30,41,59,0.58); border: 1px solid #334155; padding: 12px; border-radius: 8px; }
+        .cell { background: rgba(30,41,59,0.58); border: 1px solid #334155; padding: 12px; border-radius: 8px; transition: 0.3s; }
         .rate { font-weight: 900; color: #10b981; font-size: 1.25rem; }
     </style>
 </head>
 <body class="bg-[#f0f4f8]">
-    <header class="bg-[#1e295d] text-white px-6 py-3 flex justify-between items-center">
-        <div class="font-bold">IEI MES 物流部執行系統</div>
-        <nav class="flex gap-4">
-            <button onclick="switchView('menu')" class="hover:text-blue-300">首頁</button>
-            <button onclick="switchView('usage')" class="hover:text-blue-300">棧板使用率</button>
+    <header class="bg-[#1e295d] text-white px-6 py-3 flex justify-between items-center shadow-lg">
+        <div class="font-bold text-lg">IEI MES 物流部執行系統</div>
+        <nav class="flex gap-6">
+            <button onclick="switchView('menu')" class="hover:text-blue-300 transition">首頁</button>
+            <button onclick="switchView('usage')" class="hover:text-blue-300 transition font-bold text-blue-300">棧板使用率</button>
         </nav>
     </header>
 
-    <main id="view-menu" class="p-10">
-        <h1 class="text-2xl font-bold">功能選單</h1>
+    <main id="view-menu" class="p-10 hidden">
+        <h1 class="text-2xl font-bold text-gray-800">功能選單</h1>
     </main>
 
-    <main id="view-usage" class="p-10 hidden">
+    <main id="view-usage" class="p-10">
         <div class="dash-body">
-            <div class="flex gap-8 mb-8 p-6 bg-slate-900 border border-slate-700 rounded-2xl items-center">
+            <div class="flex gap-8 mb-8 p-6 bg-slate-900 border border-slate-700 rounded-2xl items-center shadow-2xl">
                 <div>
                     <span class="text-xs text-gray-400 uppercase tracking-wider">倉儲溫度</span>
-                    <strong class="block text-3xl font-black text-emerald-400">23.5°C</strong>
+                    <strong class="block text-4xl font-black text-emerald-400 mt-1">23.5°C</strong>
                 </div>
                 <div class="w-px h-12 bg-slate-700"></div>
                 <div>
                     <span class="text-xs text-gray-400 uppercase tracking-wider">環境濕度</span>
-                    <strong class="block text-3xl font-black text-emerald-400">48%</strong>
+                    <strong class="block text-4xl font-black text-emerald-400 mt-1">48%</strong>
                 </div>
             </div>
             
-            <h2 class="text-xl font-bold mb-6">棧板使用率概況</h2>
-            <div class="grid grid-cols-3 gap-6" id="grid-usage">
+            <h2 class="text-xl font-bold mb-6 text-white">棧板使用率概況</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="cell"><div class="text-gray-400 mb-2">1樓物流區</div><div class="rate">85%</div></div>
                 <div class="cell"><div class="text-gray-400 mb-2">B1/6F物流區</div><div class="rate">70%</div></div>
                 <div class="cell"><div class="text-gray-400 mb-2">新廠區</div><div class="rate">92%</div></div>
